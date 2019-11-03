@@ -1,0 +1,549 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Hériter de str et survivre</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/solarized.css">
+		<link rel="stylesheet" href="css/reveal-override.css">
+		<style>
+		  .dotorange {
+		  height: 25px;
+		  width: 25px;
+		  background-color: #ffa500;
+		  border-radius: 50%;
+		  display: inline-block;
+		  }
+		  .dotblue {
+		  height: 25px;
+		  width: 25px;
+		  background-color: #0000ff;
+		  border-radius: 50%;
+		  display: inline-block;
+		  }
+		  .dotyellow {
+		  height: 25px;
+		  width: 25px;
+		  background-color: #ffff00;
+		  border-radius: 50%;
+		  display: inline-block;
+		  }
+		  </style>
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+			  <section>
+			    <h2>Hériter de str et survivre</h2>
+			    <h4></h4>
+			    <center>
+			      Rémi Bois <br> PyCon Fr 2019 - 3 Novembre 2019
+			    </center>
+			  </section>
+
+			  <section>
+			    <img src="img/jouve.png" height="200vh" class="plain">
+
+			    <br/>Docteur en Informatique<br/>
+			    Ingénieur R&D Senior @ Jouve
+			    <br><p></p><p></p>
+			    <ul>
+			      <li>Traitement des langues</li>
+			      <li>Machine Learning et IA</li>
+			      <li>Extraction d'information</li>
+			      <li>Python</li>
+			    </ul>
+
+			  </section>
+
+			  <section>
+			    <img src="img/JouveWorld.PNG" height="500vh">
+
+			    <br><p></p><p></p>
+			    <ul>
+			      <li>2 000 salariés dans le monde</li>
+			      <li>BPO, SaaS, SDK, et mobile</li>
+			    </ul>
+
+			  </section>
+			  
+			  <section>
+			    <h4>Jouve recrute</h4>
+			    <img src="img/jouvemap.png" height="400vh">
+
+			    <ul>
+			      <li>DevOps</li>
+			      <li>Produits</li>
+			      <li>Applications mobiles</li>
+			    </ul>
+			  </section>
+
+			  <section>
+			    <section>
+			      <h3>Hériter de str</h3>
+			    </section>
+
+
+			    <section data-transition="convex">
+			      <h4>L'objectif</h4>
+			      <pre><code data-trim contenteditable>
+				  class PyconStr(str):
+				    pass
+				  # Magic code
+			      </code></pre>
+			      <pre><code data-trim contenteditable>
+				  s = PyconStr(" bonjour ", "Pycon")
+				  print(s) # " bonjour "
+				  s = s.strip().shout().capitalize()
+				  print(s) # "Bonjour!"
+			      </code></pre>
+
+			      <img src="img/challenge.webp" height="300vh"><br>
+			    </section>
+			    
+			    
+			    <section data-transition="convex">
+			      <h4>Ne faites pas ça !</h4>
+			      Encapsulez plutôt :
+			      <pre><code data-trim contenteditable>
+				  class JolieStr:
+				    def __init__(self, content, info):
+				      self._content = content
+				      self._info = info
+			      </code></pre>
+			      <pre><code data-trim contenteditable>
+				  s = JolieStr(" bonjour ", "Pycon").strip().shout().capitalize()
+				  print(s) # "Bonjour!"
+			      </code></pre>
+			      <img src="img/dontdoit.webp" height="300vh"><br>
+			    </section>
+			    
+
+			    <section data-transition="convex">
+			      <h4>Faites ça (et mieux plus tard) !</h4>
+
+			      <pre><code data-trim contenteditable class="stretch">
+				  class JolieStr:
+				    def __init__(self, content, info):
+				      self._content = content
+				      self._info = info
+
+				    def capitalize(self):
+				      self._content = self._content.capitalize()
+				      return self
+
+				    def shout(self):
+				      self._content = self._content + '!'
+				      return self
+
+				    def strip(self):
+				      self._content = self._content.strip()
+				      return self
+
+				    def __repr__(self):
+				      return self._content
+			      </code></pre>
+			      <pre><code data-trim contenteditable class="stretch">
+				  s = JolieStr(" bonjour ", "Pycon")
+				  print(s) # " bonjour "
+				  s = s.strip().shout().capitalize()
+				  print(s) # "Bonjour!"
+			      </code></pre>
+			    </section>
+
+			  </section>
+			  
+			  <section>
+			    <section>
+			      <h3>BasicStr</h3>
+			    </section>
+
+			    <section data-transition="convex">
+			      <h4>Première tentative</h4>
+
+			      <pre><code data-trim contenteditable class="stretch">
+				  class BasicStr(str):
+				    def __init__(self, content, info):
+				      super().__init__(content)
+				      self._info = info
+			      </code></pre>
+			      <pre><code data-trim contenteditable class="stretch">
+				  s = BasicStr(" bonjour ", "Pycon")
+				  print(s)
+			      </code></pre>
+			      <img src="img/excited2.webp" height="300vh">
+			    </section>
+
+			    <section data-transition="convex">
+			      <h4>Première Traceback</h4>
+
+			      <pre><code data-trim contenteditable class="stretch">
+				  Traceback (most recent call last):
+				  File "pyconfr2019isawesome.py", line 6, in module
+				     s = BasicStr(" bonjour ",  "Pycon")
+				  TypeError: decoding str is not supported
+			      </code></pre>
+
+			      <img src="img/disappointed2.webp" height="300vh">
+			    </section>
+
+
+
+			    <section data-transition="convex">
+			      <h4>Comprenons</h4>
+
+			      <pre><code data-trim contenteditable class="stretch">
+				  class BasicStr(str):
+				    def __init__(self, content, info):
+				      print("Hello there!", content)
+				      super().__init__(content)
+				      self._info = info
+			      </code></pre>
+
+			      <pre><code data-trim contenteditable class="stretch">
+				  Traceback (most recent call last):
+				  File "pyconfr2019isawesome.py", line 6, in module
+				     s = BasicStr(" bonjour ",  "Pycon")
+				  TypeError: decoding str is not supported
+			      </code></pre>
+			      
+			    </section>
+
+
+			    <section data-transition="convex">
+			      <h4>A __new__ challenger arrives!</h4>
+			      <div>
+			      <p documentation>object.__init__(self[, ...]):<br>
+
+			      Called after the instance has been created (by __new__()), but before it is returned to the caller.</p>
+
+			      <p documentation> object.__new__(cls[, ...]):<br>
+
+				__new__() is intended mainly to allow subclasses of immutable types (like int, str, or tuple) to customize instance creation. It is also commonly overridden in custom metaclasses in order to customize class creation.</p>
+			      </div>
+			      
+			    </section>
+
+			  </section>
+
+			  <section>
+			    <section>
+			      <h3>NewStr</h3>
+			    </section>
+			    
+			    <section data-transition="convex">
+			      <h4>Newer is better</h4>
+
+			      <pre><code data-trim contenteditable class="stretch">
+				  class NewStr(str):
+				    def __new__(cls, content, info):
+				      obj = super().__new__(cls, content)
+				      return obj
+				  
+				    def __init__(self, content, info):
+				      super().__init__()
+				      self._info = info
+
+				    def shout(self):
+				      return self + "!"
+			      </code></pre>
+
+			      <pre><code data-trim contenteditable class="stretch">
+				  s = NewStr(" bonjour ", "Pycon")
+				  print(s)
+				  print(s.upper())
+				  print(s.shout())
+			      </code></pre>
+			      
+			    </section>
+
+
+			    <section data-transition="convex">
+			      <h4>Challenge completed?</h4>
+			      <pre><code data-trim contenteditable class="stretch">
+				  s = NewStr(" bonjour ", "Pycon")
+				  print(s)
+				  print(s.upper())
+				  print(s.shout())
+			      </code></pre>
+			      <pre><code data-trim contenteditable class="stretch">
+				  bonjour 
+				  BONJOUR 
+				  bonjour !!
+			      </code></pre>
+
+			      <img src="img/tooeasy.webp" height="300vh">
+			    </section>
+
+
+			    <section data-transition="convex">
+			      <h4>A new Traceback</h4>
+			      <pre><code data-trim contenteditable class="stretch">
+				  s = NewStr(" bonjour ", "Pycon")
+				  print(s.shout().shout())
+			      </code></pre>
+			      <pre><code data-trim contenteditable class="stretch">
+				  Traceback (most recent call last):
+				  File "pyconfr2019isawesome.py", line 6, in module
+				    print(s.shout().shout())
+				  AttributeError: 'str' object has no attribute 'shout'
+			      </code></pre>
+
+			      <img src="img/knewit2.webp" height="300vh">
+			    </section>
+
+
+
+			    <section data-transition="convex">
+			      <h4>Facile !</h4>
+
+			      <pre><code data-trim contenteditable class="stretch">
+				  class NewStr(str):
+				    def __new__(cls, content, info):
+				      obj = super().__new__(cls, content)
+				      return obj
+				  
+				    def __init__(self, content, info):
+				      super().__init__()
+				      self._info = info
+
+				    def shout(self):
+				      return NewStr(self + "!", self._info)
+			      </code></pre>
+
+			      <pre><code data-trim contenteditable class="stretch">
+				  print(s.shout().shout())
+				  bonjour !!!!
+			      </code></pre>
+
+
+			      <img src="img/excited.webp" height="250vh">
+			    </section>
+
+
+
+			    <section data-transition="convex">
+			      <h4>Insuffisant</h4>
+
+
+			      <pre><code data-trim contenteditable class="stretch">
+				  print(s.upper().shout())
+			      </code></pre>
+
+			      <pre><code data-trim contenteditable class="stretch">
+				  Traceback (most recent call last):
+				  File "pyconfr2019isawesome.py", line 6, in module
+				    print(s.upper().shout())
+				  AttributeError: 'str' object has no attribute 'shout'
+			      </code></pre>
+
+			      <img src="img/disappointed.webp" height="250vh"><br/>
+
+			      Il faut aussi intercepter les méthodes de str !
+			    </section> 
+
+			  </section>
+			    
+			  <section>
+			    <section>
+			      <h3>InterceptStr</h3>
+			    </section>
+			    
+			    <section data-transition="convex">
+			      <h4>__getattribute__</h4>
+
+			      <pre><code data-trim contenteditable class="stretch">
+class InterceptStr(str):
+
+    def __new__(cls, content, info):
+        obj = super().__new__(cls, content)
+        return obj
+
+    def __init__(self, content, info):
+        super().__init__()
+        self._info = info
+
+    def __getattribute__(self, name):
+        if name in dir(str):  # only handle str methods here
+            return # the right function
+        else:  # do the usual thing
+            return super().__getattribute__(name)
+
+    def shout(self):
+        return InterceptStr(self + "!", self._info)
+			      </code></pre>
+<div>
+<p documentation> object.__getattribute__(self, name): <br/>
+
+    Called unconditionally to implement attribute accesses for instances of the class.
+</p></div>			      
+			    </section>
+
+
+			    <section data-transition="convex">
+			      <h4>getattr à la rescousse</h4>
+			      <pre><code data-trim contenteditable class="stretch">
+				  class InterceptStr(str):
+
+				    def applyfunction(self, funcname, *args, **kwargs):
+				      value = getattr(super(), funcname)(*args, **kwargs)
+				      if isinstance(value, str):
+				        return InterceptStr(value, self._info)
+				      return value
+				  
+				    def __getattribute__(self, name):
+				      if name in dir(str):  # only handle str methods here
+				        return functools.partial(self.applyfunction, name)
+				      else:  # do the usual thing
+				        return super().__getattribute__(name)
+
+			      </code></pre>
+
+			      <pre><code data-trim contenteditable class="stretch">
+				  s = InterceptStr(" bonjour ", "Pycon")
+				  print(s) # ' bonjour '
+				  print(s.upper()) # ' BONJOUR '
+				  print(s.shout()) # ' bonjour !'
+				  print(s.shout().shout()) # ' bonjour !!'
+				  print(s.upper().shout()) # ' BONJOUR !'
+				  print(s.shout().split('j')) # [' bon', 'our !']
+			      </code></pre>
+
+			    </section>
+
+
+			    <section data-transition="convex">
+			      <h4>PyconStr</h4>
+			      <pre><code data-trim contenteditable class="stretch">
+class PyconStr(str):
+
+    def __new__(cls, content, info):
+        obj = super().__new__(cls, content)
+        return obj
+
+    def __init__(self, content, info):
+        super().__init__()
+        self._info = info
+
+    def applyfunction(self, funcname, *args, **kwargs):
+        value = getattr(super(), funcname)(*args, **kwargs)
+        if isinstance(value, str):
+            return PyconStr(value, self._info)
+        return value
+
+    def __getattribute__(self, name, *args, **kwargs):
+        if name in dir(str):  # only handle str methods here
+            return functools.partial(self.applyfunction, name)
+        else:  # do the usual thing
+            return super().__getattribute__(name)
+
+    def shout(self):
+        return PyconStr(self + "!", self._info)
+
+			      </code></pre>
+
+			    </section>
+
+
+			  </section>
+
+			  <section>
+			    <section>
+			      <h3>En conclusion</h3>
+			    </section>
+
+			    <section data-transition="convex">
+			      <h4>On a vu</h4>
+
+			      <ul>
+				<li>__new__ pour l'initialisation des objets immutables</li>
+				<li>__getattribute__ pour intercepter les méthodes</li>
+				<li>getattr pour appliquer une méthode à partir de son nom</li>
+			      </ul>
+			      <img src="img/done.gif" height="300vh"><br>
+			      
+			    </section>
+			    
+			    <section data-transition="convex">
+			      <h4>Le retour de la JolieStr</h4>
+
+			      <pre><code data-trim contenteditable class="stretch">
+class JolieStr:
+    def __init__(self, content, info):
+        self._content = content
+        self._info = info
+
+    def shout(self):
+        self._content = self._content + '!'
+        return self
+
+    def applyfunction(self, name, *args, **kwargs):
+        self._content = getattr(self._content, name)(*args, **kwargs)
+        return self
+
+    def __getattribute__(self, name):
+        if name in dir(str):  # only handle str methods here
+            return functools.partial(self.applyfunction, name)
+        else:
+            return super().__getattribute__(name)
+
+    def __repr__(self):
+        return str(self._content)
+			      </code></pre>
+
+			      <pre><code data-trim contenteditable class="stretch">
+				  s = JolieStr(" bonjour ", "Pycon")
+				  print(s) # ' bonjour '
+				  print(s.upper().shout()) # ' BONJOUR !'
+				  print(s.shout().split('j')) # [' bon', 'our !']				  
+			      </code></pre>
+			    </section>
+			  
+			    <section data-transition="convex">
+			      <h4>Merci</h4>
+			      <img src="img/end.gif" height="300vh"><br>
+			      <p documentation>
+				<ul>
+				  <li>remibois.contact@gmail.com / rbois@jouve.com</li>
+				  <li>github.com/sildar</li>
+				  <li>linkedin.com/in/remi-bois</li>
+				  <li>ledatablog.com</li>
+				</p>
+			    </section>
+			  </section>
+
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
+	</body>
+</html>

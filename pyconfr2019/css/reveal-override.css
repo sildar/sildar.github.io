@@ -1,0 +1,24 @@
+body {
+    background-image: url(../img/jouve.png), url(../img/pycon-fr.png);
+    background-size: 10%, 10%;
+    background-repeat: no-repeat, no-repeat;
+    background-position: 3% 92%, 97% 100%;
+}
+
+.reveal section pre code {
+    font-size: 0.7em !important;
+	line-height: 1.5em !important;
+}
+
+
+.reveal section pre code[stacktrace]{
+    color: red !important;
+}
+
+
+.reveal section p[documentation] {
+    font-size: 0.7em !important;
+	line-height: 1.5em !important; 
+	text-align: left !important;
+	width: 100% !important;
+}
